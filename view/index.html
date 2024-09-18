@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Draw</title>
+    <link rel="stylesheet" href="./styles/drawstyle.css">
+</head>
+
+<body>
+    <h1> Easy Draw by Devrim </h1>
+    <div>
+        <p> Created to show some eventlistener ability on Canvas</p>
+    </div>
+    <!-- Position and Color Info -->
+    <div id="position-div">
+        <p id="cxpos">Canvas X: 0</p>
+        <p id="cypos">Canvas Y: 0</p>
+        <p>Selected Color: <span id="color-display"> colorNow</span></p>
+    </div>
+
+    <!-- Canvas and Color Picker -->
+    <canvas id="mycanvas" width="1200" height="800"></canvas>
+    <div style="margin-top: 20px;">
+        <label for="color-box">Select Color:</label>
+        <input id="color-box" name="color-box" type="color" style="width: 100px;">
+        <label for="line-thickness">Ellipse Thickness:</label>
+        <input id="line-thickness" name="line-thickness" value="2" type="number" min="1" max="100">
+        <label for="ellipse-width">Ellipse Width:</label>
+        <input id="ellipse-width" name="ellipse-width" value="4" type="number" min="1" max="100">
+        <label for="ellipse-height">Ellipse Height:</label>
+        <input id="ellipse-height" name="ellipse-height" value="4" type="number" min="1" max="100"><br><br>
+        <button id="clear-canvas" type="button">Clear Canvas</button>
+    </div>
+
+    <script>
+        document.getElementById('clear-canvas').addEventListener('click', () => {
+            let canvas = document.getElementById('mycanvas');
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height)
+
+
+        })
+        let nowColor = '#000000'; // Default color
+        let drawing = false; // To track whether the mouse is pressed
+        let thickness = 2; // Default ellipse border thickness
+        let ellipseWidth = 20; // Default width for the ellipse
+        let ellipseHeight = 10; // Default height for the ellipse
+
+        // Function to set up the color picker
+        function pickColor(colorSelector) {
+            colorSelector.addEventListener('change', (e) => {
+                nowColor = e.target.value; // Update the color when it changes
+                document.getElementById('color-display').style.backgroundColor = nowColor; // Show selected color
+            });
+        }
+
+        // Function to set up the thickness selector
+        function pickThickness(thicknessSelector) {
+            thicknessSelector.addEventListener('input', (e) => {
+                thickness = e.target.value; // Update the global thickness variable
+            });
+        }
+
+        // Function to set up the ellipse width and height selectors
+        function pickEllipseSize(widthSelector, heightSelector) {
+            widthSelector.addEventListener('input', (e) => {
+                ellipseWidth = e.target.value; // Update the global ellipse width
+            });
+            heightSelector.addEventListener('input', (e) => {
+                ellipseHeight = e.target.value; // Update the global ellipse height
+            });
+        }
+
+        // Set up the thickness picker
+        const thicknessSelector = document.getElementById('line-thickness');
+        pickThickness(thicknessSelector);
+
+        // Set up the ellipse size pickers
+        const ellipseWidthSelector = document.getElementById('ellipse-width');
+        const ellipseHeightSelector = document.getElementById('ellipse-height');
+        pickEllipseSize(ellipseWidthSelector, ellipseHeightSelector);
+
+        // Set up the color picker event listener
+        const colorBox = document.getElementById('color-box');
+        pickColor(colorBox);
+
+        // Get the canvas and context
+        const canvas = document.getElementById('mycanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Function to start drawing
+        function startDrawing(e) {
+            drawing = true;
+            draw(e); // Draw the first ellipse
+        }
+
+        // Function to stop drawing
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        // Function to handle drawing while the mouse is moving
+        function draw(e) {
+            if (!drawing) return; // Only draw if the mouse is pressed
+
+            const rect = canvas.getBoundingClientRect();
+            const xCan = e.clientX - rect.left;
+            const yCan = e.clientY - rect.top;
+
+            // Update coordinates on page
+            document.getElementById('cxpos').innerText = `Canvas X: ${Math.round(xCan)}`;
+            document.getElementById('cypos').innerText = `Canvas Y: ${Math.round(yCan)}`;
+
+            ctx.strokeStyle = nowColor; // Set the color for the stroke
+            ctx.lineWidth = thickness; // Set the width of the ellipse border
+
+            ctx.beginPath();
+            // Draw an ellipse at the current mouse position with the given width and height
+            ctx.ellipse(xCan, yCan, ellipseWidth, ellipseHeight, 0, 0, 2 * Math.PI);
+            ctx.fillStyle = nowColor;
+            ctx.fill();
+            ctx.stroke();
+
+        }
+
+        // Event listeners for drawing
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing); // Stop drawing if the mouse leaves the canvas
+
+
+        //add wheel
+
+        document.getElementById('ellipse-width').addEventListener('wheel', (e) => {
+            e.preventDefault(); // Prevent default scrolling behavior
+            if (e.deltaY < 0) {
+                e.target.value++; // Scroll up increases the value
+            } else {
+                e.target.value--; // Scroll down decreases the value
+            }
+        });
+
+        function addWheel(inputElement) {
+            inputElement.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    e.target.value++; // Increase value on scroll up
+                } else {
+                    e.target.value--; // Decrease value on scroll down
+                }
+                // i need to update manually
+                inputElement.dispatchEvent(new Event('input'));
+            });
+        }
+
+
+        // Apply the addWheel function to all relevant input elements
+        const ellipseWidthInput = document.getElementById('ellipse-width');
+        const ellipseHeightInput = document.getElementById('ellipse-height');
+        const lineThicknessInput = document.getElementById('line-thickness');
+
+        addWheel(ellipseWidthInput);
+        addWheel(ellipseHeightInput);
+        addWheel(lineThicknessInput);
+    </script>
+</body>
+
+</html>
