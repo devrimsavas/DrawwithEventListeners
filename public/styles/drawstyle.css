@@ -3,57 +3,106 @@ body {
   text-align: center;
   padding-top: 10px;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: darkgray;
+  background-color: #333;
+  color: #f4f4f4;
 }
 
-#position-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: lightgray;
-  border-radius: 8px;
-  width: 80%;
-  margin: auto;
+#game-info {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-#position-div p {
-  margin: 0 15px;
-  font-size: 16px;
+#game-info p {
+  font-size: 24px; /* Bigger font for better visibility */
   font-weight: bold;
+  margin: 10px 0;
 }
 
-#color-display {
-  width: 50px;
-  height: 30px;
-  border: 2px solid black;
-  margin-left: 10px;
-  background-color: #000000;
-  /* Default color */
+#timer,
+#high-score {
+  font-size: 32px; /* Increase size for timer and high score */
+  color: #ffd700; /* Gold color to make it stand out */
+}
+
+#status {
+  font-size: 28px;
+  color: #ff6347; /* Tomato color for game status */
 }
 
 canvas {
-  background-color: white;
-  border: 2px solid black;
+  background-color: #fff;
+  border: 3px solid #000;
   margin-top: 20px;
+  border-radius: 20px; /* Soften the border radius */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for 3D effect */
+}
+
+button {
+  width: 150px;
+  height: 40px;
+  border-radius: 10px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+input {
+  width: 60px;
+  height: 40px;
+  border-radius: 10px;
 }
 
 label {
+  font-size: 18px;
   font-weight: bold;
   margin-right: 10px;
 }
 
-button {
-  width: 200px;
-  height: 40px;
-  border-radius: 10px;
-  color: white;
-  background-color: blue;
+/* Navbar Styling */
+#navbar {
+  background-color: #333;
+  padding: 15px 0;
+  width: 100%;
+  position: fixed; /* Navbar stays fixed at the top of the page */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-input {
-  width: 40px;
-  height: 30px;
-  border-radius: 10px;
+#navbar ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+#navbar ul li {
+  margin: 0 20px;
+}
+
+#navbar ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#navbar ul li a:hover {
+  background-color: #007bff; /* Blue hover effect */
+  color: white;
+}
+
+body {
+  padding-top: 70px; /* Add padding to avoid content being hidden behind navbar */
 }

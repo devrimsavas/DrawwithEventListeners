@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ball Chase Game</title>
+    <link rel="stylesheet" href="./styles/drawstyle.css">
+    <style>
+        /* Set the default cursor for the canvas */
+        #mycanvas {
+            cursor: none;
+            /* Hide the cursor by default */
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav id="navbar">
+        <ul>
+            <li><a href="/">Simple Draw</a></li> <!-- Link to your simple draw page -->
+            <li><a href="/game">Ball Chase Game</a></li> <!-- Link to your ball chase game -->
+        </ul>
+    </nav>
+
+    <h1>Ball Chase Game</h1>
+    <p>Try to avoid the red ball as it chases your mouse. See how long you can last!</p>
+    <!-- Position and Timer Info -->
+    <div id="game-info">
+        <p id="timer">Seconds: 0</p>
+        <p id="high-score">Highest Record: 0 seconds</p>
+        <p id="status">Avoid the red ball!</p>
+    </div>
+
+    <!-- Canvas -->
+    <canvas id="mycanvas" width="1200" height="800"></canvas>
+
+    <script>
+        let timerElement = document.getElementById('timer');
+        let statusElement = document.getElementById('status');
+        let highScoreElement = document.getElementById('high-score');
+        let startTime = null;
+        let timerInterval = null;
+        let gameOver = false;
+
+        // Get the highest score from localStorage or set it to 0 if it doesn't exist
+        let highestRecord = localStorage.getItem('highestRecord') || 0;
+        highScoreElement.textContent = `Highest Record: ${highestRecord} seconds`;
+
+        // Start the timer
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                if (!gameOver) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    timerElement.textContent = `Seconds: ${elapsed}`;
+                }
+            }, 1000);
+        }
+
+        // Stop the timer and show the result
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Reload the page after 2 seconds when the game is over
+        function reloadGame() {
+            setTimeout(() => {
+                location.reload(); // Reload the page to restart the game
+            }, 2000);  // 2-second delay before the page reloads
+        }
+
+        // End the game and check if there's a new high score
+        function endGame(elapsedTime, message) {
+            statusElement.textContent = message;
+            gameOver = true;
+            stopTimer();
+
+            // Check if we have a new highest record
+            if (elapsedTime > highestRecord) {
+                highestRecord = elapsedTime;
+                localStorage.setItem('highestRecord', highestRecord);  // Save new high score in localStorage
+                highScoreElement.textContent = `Highest Record: ${highestRecord} seconds`;
+            }
+
+            reloadGame();  // Reload the game after 2 seconds
+        }
+
+        // End the game when the player moves out of the canvas
+        function endGameOutsideCanvas() {
+            if (!gameOver) {
+                const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                endGame(elapsedTime, `Game Over! You left the canvas.`);
+            }
+        }
+
+        // Create Oval class 
+        class createOval {
+            constructor(canvas, xpos, ypos, size, lifeSize) {
+                this.canvas = canvas;
+                this.ctx = this.canvas.getContext('2d'); // Store context for reuse
+                this.xpos = xpos;
+                this.ypos = ypos;
+                this.size = size;
+                this.lifeSize = lifeSize;
+
+                // Variables to store target positions for smooth movement
+                this.targetX = xpos;
+                this.targetY = ypos;
+                this.speed = 0.01;  // Speed for smoother movement
+            }
+
+            create() {
+                this.ctx.beginPath();
+                this.ctx.arc(this.xpos, this.ypos, this.size, 0, 2 * Math.PI);
+                this.ctx.fillStyle = 'red';
+                this.ctx.fill();
+                this.ctx.stroke();
+            }
+
+            // Move method that animates the shape toward the target
+            smoothMove() {
+                // Calculate the distance to the target
+                let dx = this.targetX - this.xpos;
+                let dy = this.targetY - this.ypos;
+
+                // Move in small steps towards the target
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance > 1) {  // Only move if the distance is greater than 1 pixel
+                    // Normalize the distance to make the movement smooth
+                    this.xpos += dx * this.speed / distance;
+                    this.ypos += dy * this.speed / distance;
+
+                    // Clear the previous position
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                    // Redraw the shape at the new position
+                    this.create();
+
+                    // Request the next frame to continue moving
+                    if (!gameOver) {
+                        requestAnimationFrame(() => this.smoothMove());
+                    }
+
+                } else if (!gameOver) {
+                    // If the ball "captures" the player (distance < 1), stop the game
+                    const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                    endGame(elapsedTime, `Game Over! You lasted ${elapsedTime} seconds.`);
+                }
+            }
+
+            // Update the target position where the shape will move towards
+            moveTo(newX, newY) {
+                this.targetX = newX;
+                this.targetY = newY;
+                this.smoothMove();  // Start the smooth movement animation
+            }
+        }
+
+        const canvas = document.getElementById('mycanvas');
+        const firstOval = new createOval(canvas, 100, 200, 30, 20);
+        firstOval.create();
+
+        // Event listener to track mouse movement and make the ball chase the mouse
+        canvas.addEventListener('mousemove', function (e) {
+            if (!startTime) {
+                // Start the game and the timer when the player first moves the mouse
+                startTimer();
+            }
+
+            if (!gameOver) {
+                const rect = canvas.getBoundingClientRect(); // Get the canvas position in the window
+                const mouseX = e.clientX - rect.left; // Mouse X relative to canvas
+                const mouseY = e.clientY - rect.top;  // Mouse Y relative to canvas
+
+                // Continuously move the oval toward the mouse position
+                firstOval.moveTo(mouseX, mouseY);
+            }
+        });
+
+        // Event listener to trigger game over when mouse leaves the canvas
+        canvas.addEventListener('mouseleave', function () {
+            endGameOutsideCanvas();
+        });
+
+        // Change mouse pointer when entering the canvas
+        canvas.addEventListener('mouseenter', function () {
+            canvas.style.cursor = 'crosshair';  // Change cursor to crosshair
+        });
+
+        // Reset cursor when mouse leaves the canvas
+        canvas.addEventListener('mouseleave', function () {
+            canvas.style.cursor = 'none';  // Hide cursor when outside canvas
+        });
+    </script>
+</body>
+
+</html>
