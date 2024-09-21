@@ -1,0 +1,57 @@
+[
+  {
+    "id": "abc123",
+    "given_name": "John",
+    "family_name": "Doe",
+    "nickname": "johndoe",
+    "name": "John Doe",
+    "picture": "/images/john-doe.png",
+    "email": "johndoe@example.com",
+    "email_verified": true,
+    "date": "2024-09-21T18:00:00.000Z"
+  },
+  {
+    "id": "xyz456",
+    "given_name": "Jane",
+    "family_name": "Smith",
+    "nickname": "janesmith",
+    "name": "Jane Smith",
+    "picture": "/images/jane-smith.png",
+    "email": "janesmith@example.com",
+    "email_verified": true,
+    "date": "2024-09-21T18:05:00.000Z"
+  },
+  {
+    "id": "pqr789",
+    "given_name": "Alice",
+    "family_name": "Johnson",
+    "nickname": "alicej",
+    "name": "Alice Johnson",
+    "picture": "/images/alice-johnson.png",
+    "email": "alicejohnson@example.com",
+    "email_verified": false,
+    "date": "2024-09-21T18:10:00.000Z"
+  },
+  {
+    "id": "stu012",
+    "given_name": "Bob",
+    "family_name": "Brown",
+    "nickname": "bobbrown",
+    "name": "Bob Brown",
+    "picture": "/images/bob-brown.png",
+    "email": "bobbrown@example.com",
+    "email_verified": true,
+    "date": "2024-09-21T18:15:00.000Z"
+  },
+  {
+    "id": "uvw345",
+    "given_name": "Charlie",
+    "family_name": "Davis",
+    "nickname": "charlied",
+    "name": "Charlie Davis",
+    "picture": "/images/charlie-davis.png",
+    "email": "charliedavis@example.com",
+    "email_verified": false,
+    "date": "2024-09-21T18:20:00.000Z"
+  }
+]
