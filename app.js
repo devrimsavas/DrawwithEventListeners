@@ -62,6 +62,21 @@ app.get("/game", (req, res) => {
   res.sendFile(path.join(__dirname, "view", "game.html")); // Serve game.html
 });
 
+app.get("/visitors", (req, res) => {
+  fs.readFile("visitors.json", "utf8", (err, data) => {
+    if (err) {
+      console.error("Error reading file", err);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Internal server error" }));
+      return;
+    }
+
+    // If no error, send the file content
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(data);
+  });
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is listening at port ${port}`);
