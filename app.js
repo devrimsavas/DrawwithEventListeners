@@ -23,7 +23,11 @@ app.get("/", (req, res) => {
   console.log("hello");
   if (!req.cookies.visitorId) {
     const visitorId = Math.random().toString(36).substring(7);
-    res.cookie("visitorId", visitorId, { maxAge: 900000, httpOnly: true });
+    res.cookie("visitorId", visitorId, {
+      maxAge: 900000,
+      httpOnly: true,
+      secure: false,
+    });
     console.log(`New visitor assigned ID: ${visitorId}`);
 
     // Visitor data to be saved
